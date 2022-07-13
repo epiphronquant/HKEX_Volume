@@ -20,7 +20,7 @@ st.title('HKEX Volume Analysis')
 def load_data(link):
     df = pd.read_excel(link,sheet_name='Sheet1', header = 0, engine = 'openpyxl', parse_dates = False)
     return df
-link = r'C:\Users\Angus\OneDrive - epiphroncapital.com\文件\Research\18A Status\Volume.xlsx'
+link = r'Volume.xlsx'
 df = load_data(link)
 
 ### select sector, select main board, 18A listed 
