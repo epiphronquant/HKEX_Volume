@@ -334,7 +334,7 @@ for ticker in tickers:
         df5 = df5.mean()
         df8.append(df5)
     df88.append (df8)
-columns = ['Yf Ticker', '20 Avg Vol', '40 Avg Vol', '60 Avg Vol']
+columns = ['Yf Ticker', '20 TD Avg Vol', '40 TD Avg Vol', '60 TD Avg Vol']
 df88 = pd.DataFrame(df88, columns = columns)
 df3 = df3.merge(df88, left_on='Yf Ticker', right_on='Yf Ticker')
 df3 
