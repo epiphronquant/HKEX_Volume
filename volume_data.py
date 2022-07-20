@@ -302,6 +302,7 @@ st.plotly_chart(fig, use_container_width=True)
 #### mkt cap slider
 ## lower and higher end of market cap, need to adjust units into maybe 100M or B HKD
 df ['Mkt Cap (Jul 8) 100M'] = df ['Mkt Cap (Jul 8)']/ 100000000
+df['Mkt Cap (Jul 8) 100M'] = df['Mkt Cap (Jul 8) 100M'].astype(float)
 
 min_mktcap = df ['Mkt Cap (Jul 8) 100M'].min()
 max_mktcap = df ['Mkt Cap (Jul 8) 100M'].max()
