@@ -308,7 +308,7 @@ min_mktcap = df ['Mkt Cap (Jul 8) 100M'].min()
 max_mktcap = df ['Mkt Cap (Jul 8) 100M'].max()
 
 ## the slider and selecting relevant data
-slider = st.slider('Select Market Cap in 100M', min_value=min_mktcap, value=(min_mktcap,max_mktcap), max_value=max_mktcap)
+slider = st.slider('Select Market Cap in 100M', min_value=min_mktcap, value=float((min_mktcap,max_mktcap)), max_value=max_mktcap)
 lower_mktcap = slider [0]
 upper_mktcap = slider [1]
 
