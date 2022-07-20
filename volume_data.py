@@ -319,15 +319,25 @@ st.info('Lower: **' + str(lower_mktcap) + '** Higher: **' + str(upper_mktcap) +'
 df = df[(df['Mkt Cap (Jul 8) 100M'] >= lower_mktcap) & (df['Mkt Cap (Jul 8) 100M'] <= upper_mktcap)] ### filter the data
 
 ### display df with filtered data and appropriate data
-df
-### need to write code for this where it shows ticker, chinese name, eng name, mkt cap, most recent 20, 40, 60 trading days volume
-## build a loop taht gathers and reflects this data then builds it into a new df
+tickers = df ['Yf Ticker']
+tickers = tickers.to_list()
+df2  = yf.download(tickers,period = 'max') ['Volume'] ### this could be referenced with the dataset used for homemade_index()
+df3 = df [['Yf Ticker', 'Stock Name', 'Stock Name CN', 'Mkt Cap (Jul 8) 100M']]
 
-# tickers = df ['Yf Ticker']
-# tickers = tickers.to_list()
-# data  = yf.download(tickers,period = 'max')
-
-
+df88 = []
+for ticker in tickers:
+    df8 = [ticker]
+    trading_days = [20,40,60]
+    for day in trading_days:
+        df4 = df2 [ticker]
+        df5 = df4.iloc[-day:]
+        df5 = df5.mean()
+        df8.append(df5)
+    df88.append (df8)
+columns = ['Yf Ticker', '20 Avg Vol', '40 Avg Vol', '60 Avg Vol']
+df88 = pd.DataFrame(df88, columns = columns)
+df3 = df3.merge(df88, left_on='Yf Ticker', right_on='Yf Ticker')
+df3 
 
 ### Chart 3: same charting excerise with homemade index and display
 @st.cache(ttl= 1800, allow_output_mutation=True) ## input holds for 30 mins before getting refreshed
