@@ -14,7 +14,7 @@ import datetime as dt
 
 st.set_page_config(layout="wide")
 st.title('HKEX Volume Analysis')
-
+st.info("Please read documentation https://github.com/epiphronquant/HKEX_Volume regarding methodology")
 @st.cache(ttl= 1800) ## Data would need to get reloaded every 30 minutes
 def load_data(link):
     df = pd.read_excel(link,sheet_name='Sheet1', header = 0, engine = 'openpyxl', parse_dates = False)
