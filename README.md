@@ -1,4 +1,6 @@
 # HKEX_Volume
+[![HKEX_Volume Updater](https://github.com/epiphronquant/HKEX_Volume/actions/workflows/main.yml/badge.svg)](https://github.com/epiphronquant/HKEX_Volume/actions/workflows/main.yml)
+
 Streamlit App that visualizes volume data for stocks on HKEX
 
 Follow the link to access the app: https://epiphronquant-hkex-volume-volume-data-knj864.streamlitapp.com/
