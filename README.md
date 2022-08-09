@@ -10,7 +10,7 @@ This app visualizes volume data on HKEX stocks. The app utilizes our homemade in
 **Key Assumptions**
 1. The homemade index methodology is representative of market conditions
 2. First couple days since IPO trading volume is negligible to homemade index (does not appear to hold)
-3. HKEX-IPO-app includes the latest Industry and Sector data (if it doesn't the stock isn't updated and included until it is).
+3. HKEX-IPO-app includes the latest Industry and Sector data (if it doesn't the stock isn't updated and included until it is; this can be checked if the app runs smoothly and doesn't require update by the administrator).
 
 **Data Sources**
 1. HKEX: List of all the stocks, listing on main board or GEM. 
