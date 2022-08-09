@@ -16,6 +16,7 @@ This app visualizes volume data on HKEX stocks. The app utilizes our homemade in
 4. Same chart as chart 2 but visualizes data based on filtered stocks in chart 3.
 
 **Homemade Index Methodology**
+
 Weights are applied on the daily percentage change for the creation of the adjusted close index and volume index
 Homemade Index calculates weights using Market Cap as follows:
 ![image](https://user-images.githubusercontent.com/91112822/180348879-d96a6752-4049-40e5-bb3d-55d0c9f5d05b.png)
