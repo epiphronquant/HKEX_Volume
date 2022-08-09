@@ -8,9 +8,10 @@ Follow the link to access the app: https://epiphronquant-hkex-volume-volume-data
 This app visualizes volume data on HKEX stocks. The app utilizes our homemade index methodology for charts 2 and 3 to summarize the data. The method suffers from bias due to the first few days of IPO trading volume being significantly higher than the rest. It utilizes data from HKEX and yfinance.
 
 **Data Sources**
-1. HKEX: List of all the stocks, listing on main board or GEM and 18A status. 
-2. Yfinance: Sector, Industry for stocks and Market Cap for new stocks (from auto update).
-3. Microsoft Excel: Market Cap for old stocks (manual update).
+1. HKEX: List of all the stocks, listing on main board or GEM. 
+2. yfinance: Sector and Industry for old stocks
+3. HKEX-IPO-app: Sector, Industry, Market Cap for updated stocks. Sector, Industry comes from yfinance, Market Cap from AA stocks.
+4. Microsoft Excel: Market Cap for stocks (manual update).
 
 **Chart by Chart Explanation**
 1. Displays a stock's adjusted close and their 20, 40, 60 average trading day volume. Can be selected based on ticker or English stock name.
