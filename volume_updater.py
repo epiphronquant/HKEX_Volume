@@ -31,6 +31,8 @@ else:
     biotech = biotech.astype(int)
     df_IPO ['18A Listed'] = biotech
     
+    df_IPO = df_IPO.dropna() ### sometimes RawData doesn't have Industry or Sector data; thus we drop it and it will automatically get added back in when we manually add it in later on
+    
     ### add main board data from HKEX 
     df = pd.read_excel(r'https://www.hkex.com.hk/eng/services/trading/securities/securitieslists/ListOfSecurities.xlsx', header = 2)
     df_hkex = df[df['Stock Code'].isin(df_IPO['Stock Code'])]
