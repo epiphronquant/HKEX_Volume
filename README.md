@@ -6,6 +6,7 @@ Streamlit App that visualizes volume data for stocks on HKEX
 Follow the link to access the app: https://epiphronquant-hkex-volume-volume-data-knj864.streamlitapp.com/
 
 This app visualizes volume data on HKEX stocks. The app utilizes our homemade index methodology for charts 2 and 3 to summarize the data. The method suffers from bias due to the first few days of IPO trading volume being significantly higher than the rest. It utilizes data from HKEX and yfinance.
+
 **Key Assumptions**
 1. The homemade index methodology is representative of market conditions
 2. First couple days since IPO trading volume is negligible to homemade index (does not appear to hold)
