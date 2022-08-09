@@ -12,6 +12,7 @@ This app visualizes volume data on HKEX stocks. The app utilizes our homemade in
 2. First couple days since IPO trading volume is negligible to homemade index (does not appear to hold)
 3. HKEX-IPO-app includes the latest Industry and Sector data (if it doesn't the stock isn't updated and included until it is; this can be checked if the HKEX-IPO-app runs smoothly and doesn't require update by the administrator).
 4. Days where there is 0 volume is replaced with yesterday's volume. This is an upward bias and we assume it is negligible.
+5. Market Cap is not fully on July 8th due to new stock updates that uses market caps at time of IPO. We assume this is negligible. 
 
 **Data Sources**
 1. HKEX: List of all the stocks, listing on main board or GEM. 
