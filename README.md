@@ -7,8 +7,8 @@ This app visualizes volume data on HKEX stocks. The app utilizes our homemade in
 
 **Data Sources**
 1. HKEX: List of all the stocks, listing on main board or GEM and 18A status. 
-2. Yfinance: Sector and Industry data for stocks
-3. Microsoft Excel: Market Cap
+2. Yfinance: Sector, Industry for stocks and Market Cap for new stocks (from auto update).
+3. Microsoft Excel: Market Cap for old stocks (manual update).
 
 **Chart by Chart Explanation**
 1. Displays a stock's adjusted close and their 20, 40, 60 average trading day volume. Can be selected based on ticker or English stock name.
