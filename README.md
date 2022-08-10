@@ -13,6 +13,7 @@ This app visualizes volume data on HKEX stocks. The app utilizes our homemade in
 3. HKEX-IPO-app includes the latest Industry and Sector data (if it doesn't the stock isn't updated and included until it is; this can be checked if the HKEX-IPO-app runs smoothly and doesn't require update by the administrator).
 4. Days where there is 0 volume is replaced with yesterday's volume. This is an upward bias and we assume it is negligible.
 5. Market Cap is not fully on July 8th due weekly new stock updates that uses market caps at the time of IPO. We assume this is negligible. For market cap to be up to date this has to be done manually.
+6. Delisted stocks are NOT examined. We assume survivorship bias is neglible.
 
 **Data Sources**
 1. HKEX: List of all the stocks, listing on main board or GEM. 
