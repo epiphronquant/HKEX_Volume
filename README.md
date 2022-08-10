@@ -18,7 +18,7 @@ This app visualizes volume data on HKEX stocks. The app utilizes our homemade in
 **Data Sources**
 1. HKEX: List of all the stocks, listing on main board or GEM. 
 2. yfinance: Sector and Industry for old stocks
-3. HKEX-IPO-app: Sector, Industry, Market Cap for updated stocks. Sector, Industry comes from yfinance, Market Cap from AA stocks.
+3. HKEX-IPO-app: Sector, Industry, Market Cap for updated stocks. Sector, Industry comes from yfinance, Market Cap from AA stocks. This gets updated every 9am HKT on Sunday; 1 hour after the HKEX-IPO-app is updated.
 4. Microsoft Excel: Market Cap for stocks (manual update).
 
 **Chart by Chart Explanation**
