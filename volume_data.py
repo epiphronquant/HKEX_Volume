@@ -8,9 +8,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import investpy
 import yfinance as yf
-import datetime as dt
 import numpy as np
 
 st.set_page_config(layout="wide")
@@ -156,7 +154,11 @@ else:
 tickers = df['Yf Ticker']
 tickers = tickers.to_list()
 
-data = yf.download(tickers)
+@st.cache(ttl= 1800, allow_output_mutation=True) ## input holds for 30 mins before getting refreshed
+def download(tickers):
+    data = yf.download(tickers)
+    return data
+data = download(tickers)
 
 def to_market(x, column, data2):
     if pd.isna(x):
