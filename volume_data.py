@@ -11,6 +11,7 @@ from plotly.subplots import make_subplots
 import investpy
 import yfinance as yf
 import datetime as dt
+import numpy as np
 
 st.set_page_config(layout="wide")
 st.title('HKEX Volume Analysis')
@@ -28,7 +29,6 @@ with column_1:## dropdown box for sector selection
     sectors = df['Sector']
     sectors = sectors.tolist()
     sectors = list(dict.fromkeys(sectors))
-    # healthcare = sectors [3]
     sectors.append('All')### adds an option for All IPOs
     sectors.remove ('Healthcare')
     sectors.append('Healthcare') 
@@ -153,139 +153,78 @@ if industry == 'All':
 else:
     df = df.loc[df['Industry'] == industry]
 
+tickers = df['Yf Ticker']
+tickers = tickers.to_list()
 
-# df为要分析的结果的数据, This is code for making the homemade index
-def homemade_index(df, column):
-    ### input a dataframe with a column 'Yf Ticker', 'Stock Name' and 'Mkt Cap (Jul 8)', and a column of interest (str)
+data = yf.download(tickers)
+
+def to_market(x, column, data2):
+    if pd.isna(x):
+        return 0
+    return data2[data2["Yf Ticker"] == column]["Mkt Cap (Jul 8)"].values[0]
+
+def homemade_index(data, df, datatype):   
+    ### input data and df
     ### output a dataframe showing the homemade index value###    
-    df0 = df.copy()
     
-    ## develop code for homemade index based on mkt cap
-    #### This was for generating the index ret sheet in the index_correlations project ######
-    ## need to gather all the tickers and calculate the returns
-    # 构造表格1
-    etl_col=df['Yf Ticker'].tolist()
-    # etl_col=['2157.HK','2185.HK','2257.HK']
-    # 成功下载的
-    etl_col_2=[]
-    df_1 = pd.DataFrame()
-    for i, col in enumerate(etl_col):  ### this can be modified to download tickers faster. yf.download has threading when everything is inputted at once
-        try:
-            print('下载进度{}/{}'.format(i+1,len(etl_col)))
-            tmp_t = yf.download(col,period = 'max')[column]
-            tmp_t = tmp_t.replace(to_replace=0,method='ffill') ## replaces 0 volume with previous day volume
-            etl_col_2.append(col)
-            df_1 = pd.concat([df_1, tmp_t], axis=1)
-        except Exception as e:
-            pass
-    df_1.columns = [col + ' ' + column for col in etl_col]
-    df_1.index = df_1.index.map(lambda x: str(x)[0:10])
-    df_1.sort_index(inplace=True)
-    # df_1
+    # adjust yf downloaded data so it matches data.xlsx format
+    Adj_Close2 = data [datatype]
+    Adj_Close2 = Adj_Close2.replace(to_replace=0,method='ffill')
+    columns = Adj_Close2.columns
+    columns = columns.to_list()
+    columns = columns
+    df8 = []
+    df8.append(columns)
     
+    df9 = [np.nan] *len(columns)
+    df8.append(df9)
     
-    # 构建表格2，求return，计算每个return
-    df_2 = pd.DataFrame()
-    for col in df_1.columns:
-        df_2[col + ' Return'] = df_1[col].shift(-1) / df_1[col] - 1
-    # df_2
+    df10 = pd.DataFrame(data = df8, columns = columns)
+    df2 = pd.concat([df10, Adj_Close2], ignore_index=False, axis = 0)
+    #### 
     
-    #
-    # 第三表需要拆成2张表3——1，修改  公司  weigh。
-    # 3——2  日期。 公司1比例 公司2比例 公司三比例 横加起来为1
-    all_mkt = df0['Mkt Cap (Jul 8)'].sum()
-    df_3 = df0.groupby('Stock Name')['Mkt Cap (Jul 8)'].sum() / all_mkt * 100
-    # df_3
+    Adj_Close = df2
     
-    # 构造一个新的df
-    mydict1 = {}
-    mydict2 = {}
-    stick_name = df0['Stock Name'].tolist()
-    Yf_Ticker = df0['Yf Ticker'].tolist()
-    mkt = df0['Mkt Cap (Jul 8)'].tolist()
-    for k, v in zip(stick_name, mkt):
-        mydict1[k] = v
-    for k, v in zip(Yf_Ticker, stick_name):
-        mydict2[k] = v
-    
-    
-    # df_4 计算市场比重,如果收益不为空
-    df_2_flag = df_2.notna() * 1
-    # print(df_2_flag)
-    ret = []
-    i = 0
-    for time in df_2.index:
-        TT = []
-        # 找到不为0的公司名称
-        TT.append(time)
-    
-        # 处理每一类列
-        tt = df_2.loc[time, :]
-        for elem in tt.index:
-            # 解析出来Yf Ticker
-            ticker_name = elem.split(' ')[0]
-            # 获取器对应的市场规模
-    
-            if df_2_flag.loc[time,elem]==0:
-                TT.append(0)
-            else:
-                value = mydict1.get(mydict2.get(ticker_name, 0), 0)
-                TT.append(value)
-        # 计算比重
-        if sum(TT[1:]) != 0:
-            TT[1:] = [elem / sum(TT[1:]) * 100 for elem in TT[1:]]
-        else:
-            TT[1:] = [0] * len(TT[1:])
-        ret.append(TT)
-    df_4 = pd.DataFrame(ret, columns=['time'] + [mydict2.get(elem.split(' ')[0], 0) for elem in df_2.iloc[0].index])
-    df_4=df_4.set_index('time')
-    df_4.sort_index(inplace=True)
-    # df_4
-         
-    # 计算对应的return all
-    df_3_flag = df_2.notna() * 1
-    ret = []
-    i = 0
-    start=100
-    for i,time in enumerate(df_2.index):
-        TT = []
-        TT.append(time)
-        all_return=0
-        # 处理每一类列
-        tt = df_2.loc[time, :]
-        for  j,_ in enumerate(tt.index):
-            # 解析出来Yf Ticker
-            #计算总收入
-            b1=df_4.iloc[i,j]  #比重
-            b2=df_2.fillna(0).iloc[i,j] #df_2
-    
-            all_return=all_return+b1*b2
-        #print(i,j,all_return)
-        TT.append(all_return)
-        TT.append(start)
-        start=start*(1+TT[1]/100)
-        ret.append(TT)
-    df_5 = pd.DataFrame(ret, columns=['time'] + ['homemade_index','Return%'])
-    df_5.set_index('time')
-    df_5.sort_index(inplace=True)
-    return df_5
+    Adj_Close = Adj_Close
+    data1_index = Adj_Close.index[2:]
+    data1_columns = Adj_Close.iloc[0]
+    Adj_Close = pd.DataFrame(Adj_Close.iloc[2:, :].values, index=data1_index, columns=data1_columns)
+    Adj_Close_return = Adj_Close.pct_change()
+    Volume = df
+    market = Adj_Close.copy()
+    for column in market.columns:
+        market[column] = market[column].apply(to_market, column=column, data2=Volume)
+    market_sum = market.sum(axis=1)
+    weight = market.div(market_sum.values, axis=0)
+    Homemade_Index_Return = pd.DataFrame(index=weight.index, columns=["Homemade_Index_Return"])
+    Adj_Close_return.fillna(0, inplace=True)
+    for index, series in Adj_Close_return.iterrows():
+        #     print(index)
+        #     print(series.values)
+        Homemade_Index_Return.loc[index, "Homemade_Index_Return"] = \
+        np.matmul(series.values, weight.loc[index, :].values.reshape(-1, 1))[0]
+    Homemade_Index_Return = Homemade_Index_Return + 1
+    Homemade_Index_Return.iloc[0, 0] = 100
+    Homemade_Index_Return = Homemade_Index_Return.cumprod()
+    Homemade_Index_Return = Homemade_Index_Return.astype(float)
+    return Homemade_Index_Return
 
 @st.cache(ttl= 1800, allow_output_mutation=True) ## input holds for 30 mins before getting refreshed
-def chart_2 (df):
+def chart_2 (df, data):
     # download and calculate data for chart 2
-    df2 = homemade_index(df, 'Adj Close')
+    df2 = homemade_index(data, df, 'Adj Close')
     
     # visualize chart 2
     fig = make_subplots(specs=[[{"secondary_y": True}]])
         # Add traces
-    fig.add_trace(go.Scatter(x= df2 ['time'], y= df2 ['Return%'], name= 'Adjusted Close' ),
+    fig.add_trace(go.Scatter(x= df2.index, y= df2 ['Homemade_Index_Return'], name= 'Adjusted Close' ),
         secondary_y=False)
     
-    df2 = homemade_index(df, 'Volume')
+    df2 = homemade_index(data, df, 'Volume')
     trading_days = [20, 40, 60] ### trading days that are being calculated
     for day in trading_days:
-        df2 = average_trading(df2, day, 'Return%')
-        fig.add_trace(go.Scatter(x = df2 ['time'], y= df2['Average '+str (day) +' Trading Days Return%'], name= 'Average '+str (day) +' Trading Days Volume'),
+        df2 = average_trading(df2, day, 'Homemade_Index_Return')
+        fig.add_trace(go.Scatter(x = df2.index, y= df2['Average '+str (day) +' Trading Days Homemade_Index_Return'], name= 'Average '+str (day) +' Trading Days Volume'),
                       secondary_y=True)
         # Add figure title
     fig.update_layout(title_text= industry + ' Homemade Index Price and Average Volume Chart')
@@ -295,7 +234,7 @@ def chart_2 (df):
     fig.update_yaxes(title_text= 'Adjusted Closing Price Index', secondary_y=False)
     fig.update_yaxes(title_text="Volume Index", secondary_y=True)
     return fig
-fig = chart_2(df)
+fig = chart_2(df, data)
 st.plotly_chart(fig, use_container_width=True)
 
 #### mkt cap slider
@@ -317,10 +256,13 @@ st.info('Lower: **' + str(lower_mktcap) + '** Higher: **' + str(upper_mktcap) +'
 ## filter data by  market cap
 df = df[(df['Mkt Cap (Jul 8) 100M'] >= lower_mktcap) & (df['Mkt Cap (Jul 8) 100M'] <= upper_mktcap)] ### filter the data
 
-### display df with filtered data and appropriate data
+### filter downloaded data
 tickers = df ['Yf Ticker']
 tickers = tickers.to_list()
-df2  = yf.download(tickers,period = 'max') ['Volume'] ### this could be referenced with the dataset used for homemade_index()
+data = data.loc[:, (['Adj Close', 'Volume'], tickers)]
+
+### display df with filtered data and appropriate data
+df2  = data ['Volume'] ### this could be referenced with the dataset used for homemade_index()
 df3 = df [['Yf Ticker', 'Stock Name', 'Stock Name CN', 'Mkt Cap (Jul 8) 100M']]
 
 df88 = []
@@ -340,21 +282,21 @@ df3
 
 ### Chart 3: same charting excerise with homemade index and display
 @st.cache(ttl= 1800, allow_output_mutation=True) ## input holds for 30 mins before getting refreshed
-def chart_3 (df):
+def chart_3 (df, data):
     # download and calculate data for chart 3
-    df2 = homemade_index(df, 'Adj Close')
+    df2 = homemade_index(data, df, 'Adj Close')
     
     # visualize chart 3
     fig = make_subplots(specs=[[{"secondary_y": True}]])
         # Add traces
-    fig.add_trace(go.Scatter(x= df2 ['time'], y= df2 ['Return%'], name= 'Adjusted Close' ),
+    fig.add_trace(go.Scatter(x= df2.index, y= df2 ['Homemade_Index_Return'], name= 'Adjusted Close' ),
         secondary_y=False)
     
-    df2 = homemade_index(df, 'Volume')
+    df2 = homemade_index(data, df, 'Volume')
     trading_days = [20, 40, 60] ### trading days that are being calculated
     for day in trading_days:
-        df2 = average_trading(df2, day, 'Return%')
-        fig.add_trace(go.Scatter(x = df2 ['time'], y= df2['Average '+str (day) +' Trading Days Return%'], name= 'Average '+str (day) +' Trading Days Volume'),
+        df2 = average_trading(df2, day, 'Homemade_Index_Return')
+        fig.add_trace(go.Scatter(x = df2.index, y= df2['Average '+str (day) +' Trading Days Homemade_Index_Return'], name= 'Average '+str (day) +' Trading Days Volume'),
                       secondary_y=True)
         # Add figure title
     fig.update_layout(title_text= industry + ' '+ str(lower_mktcap) + ' - ' + str(upper_mktcap) + ' 100M HKD Mkt Cap Homemade Index Price and Average Volume Chart')
@@ -364,5 +306,5 @@ def chart_3 (df):
     fig.update_yaxes(title_text= 'Adjusted Closing Price Index', secondary_y=False)
     fig.update_yaxes(title_text="Volume Index", secondary_y=True)
     return fig
-fig = chart_3(df)
+fig = chart_3(df, data)
 st.plotly_chart(fig, use_container_width=True)
